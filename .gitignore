@@ -1,0 +1,16 @@
+dados
+outros
+scratch
+teste
+website
+__pycache__
+*.empty
+*.ipynb_checkpoints
+
+#py files
+publiquese
+scripts/obtencao/dados_digesto.py
+scripts/obtencao/dados_digesto_processosRelacionados.py
+scripts/obtencao/dados_digesto_outros.py
+scripts/obtencao/dados_digesto_processosRelacionados_outros.py
+scripts/analise/subir_publiquese.sh
