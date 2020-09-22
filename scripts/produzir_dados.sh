@@ -43,6 +43,9 @@ python scripts/analise/selecionar_lotes.py --status_publiquese 3 4
 python scripts/limpeza/consolidar_partes.py
 python scripts/limpeza/limpar_publiquese.py
 
+#rotina para eliminar políticos
+python scripts/analise/eliminar_politicos.py
+
 #subir no servidor
 source scripts/analise/subir_publiquese.sh
 

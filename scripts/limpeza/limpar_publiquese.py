@@ -294,14 +294,20 @@ def organizar_base04(refazer=False, retorno=False):
         converters={'NR_CPF_CANDIDATO': lambda x: str(x).rjust(11)}
     )
 
-    politicos['NR_CPF_CANDIDATO'] = politicos['NR_CPF_CANDIDATO']\
-        .apply(lambda x: str(x) if not pd.isnull(x) else x)\
-        .replace(r' *', '', regex=True)\
-        .str.pad(11, fillchar='0')
+    #construir lista de cpfs
+    politicos['NR_CPF_CANDIDATO'] = (
+        politicos['NR_CPF_CANDIDATO']
+            .apply(lambda x: str(x) if not pd.isnull(x) else x)
+            .replace(r' *', '', regex=True)
+            .str.pad(11, fillchar='0')
+    )
 
     politicos = politicos.NR_CPF_CANDIDATO.to_list()
 
     #carregar dados e filtrar de acordo com os CPFs
+    cand2014 = pd.read_csv(
+        entrada / 'candidatos2014.csv', dtype=str, sep=';', encoding='latin1'
+    )
     cand2016 = pd.read_csv(entrada / 'candidatos2016.csv', dtype=str)
     cand2018 = pd.read_csv(entrada / 'candidatos2018.csv', dtype=str)
 
@@ -312,7 +318,7 @@ def organizar_base04(refazer=False, retorno=False):
 
     #salvar base sem alterações
     organizar_base04.candidatos = pd.concat(
-        [cand2016, cand2018], ignore_index=True
+        [cand2014, cand2016, cand2018], ignore_index=True
     )
 
     #salvar base com alterações
@@ -543,25 +549,30 @@ def organizar_base07(detalhes, retorno=False):
     if retorno: return assuntos
 
 # criar função para organizar base08
-def organizar_base08(processos):
+def organizar_base08():
     fname = saida / 'base08_qtdeprocessos.csv'
-    processos\
-        .dropna(subset=['cpf'])\
-        .groupby('cpf', as_index=False)\
+    df = pd.read_csv(saida / 'politicos_partes.csv', dtype=str)
+    df = df[['numero_cnj', 'cpf', 'status_politico']]
+    df = df[df['cpf'].notnull()]
+    df = df[df['status_politico'] != '2']
+    df['numero_cnj'] = df['numero_cnj'].replace(r'\W', '', regex=True)
+    df\
+        .drop_duplicates(['numero_cnj', 'cpf'])\
+        .drop(columns=['status_politico'])\
+        .groupby('cpf')\
         .count()\
+        .reset_index()\
         .rename(columns={'numero_cnj': 'qt_processos'})\
-        .filter(items=['cpf', 'qt_processos'])\
         .to_csv(fname, quoting=QUOTE_ALL, index=False)
+    return df
 
 # criar função para organizar base09
-def organizar_base09(processos):
+def organizar_base09(df):
     fname = saida / 'base09_listaprocessos.csv'
-    processos\
+    df\
+        .drop_duplicates(['numero_cnj', 'cpf'])\
         .rename(columns={'numero_cnj': 'numero_unico_trib'})\
-        .filter(items=['cpf', 'numero_unico_trib'])\
-        .dropna(subset=['cpf'])\
-        .applymap(lambda x: re.sub(r'\W', '', x))\
-        .drop_duplicates()\
+        [['cpf', 'numero_unico_trib']]\
         .to_csv(fname, quoting=QUOTE_ALL, index=False)
 
 # criar base de dados para download
@@ -646,14 +657,15 @@ if __name__ == '__main__':
     #criar base07_partes
     assuntos = organizar_base07(detalhes, True)
 
-    #criar base08_qtprocessos
-    organizar_base08(detalhes)
-
-    #criar base09_listaprocessos
-    organizar_base09(detalhes)
-
     #criar base01_processos
     organizar_base01(detalhes, organizar_base04.candidatos, partes, assuntos)
 
+    #criar base08_qtprocessos
+    processos = organizar_base08()
+
+    #criar base09_listaprocessos
+    organizar_base09(processos)
+
     #criar base10_downloads
+    # assuntos = ['Calúnia', 'Difamação', 'Injúria', '']
     organizar_base10()

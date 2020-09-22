@@ -4,11 +4,11 @@
 
 #importar pacotes
 from pathlib import Path
-import ast
-import multiprocessing as mp
-import os, re
+import ast, multiprocessing as mp, os, re, pickle
+
+#importar pacotes de terceiros
 import pandas as pd, numpy as np
-import pickle
+import tqdm
 
 #desligar warning do pandas
 pd.set_option('mode.chained_assignment', None)
@@ -52,8 +52,7 @@ def encontrar_nomes(nomes, cands, partes, frequência=1):
     ]
 
     #criar lista de prováveis políticos
-    provaveis = partes.dropna(subset=['nome_normalizado'])
-    provaveis = provaveis[provaveis['cpf'].isnull()]
+    provaveis = partes[partes['cpf'].isnull()]
     provaveis = provaveis[
         provaveis['nome_normalizado'].isin(cands_unicos['nome'])
     ]
@@ -112,7 +111,6 @@ def formatar_assuntos(texto):
 def filtrar_assuntos(df, descarte):
     return df[~df['numero_cnj'].isin(descarte['numero_cnj'])]
 
-
 #definir função para organizar assuntos que são extraídos do digesto
 def organizar_assuntos(texto):
     texto = _split_assunto(texto, ramo_sim)
@@ -153,7 +151,6 @@ candidatos['NR_CPF_CANDIDATO'] = (candidatos['NR_CPF_CANDIDATO']
     .replace(r'\.\d', '', regex=True)
     .str.pad(11, fillchar='0')
 )
-
 #carregar o indicator de tribunais
 tribunais_uf = pd.read_csv(entrada / 'tribunais_uf.csv')
 tribunais_uf['tribunais'] = tribunais_uf['tribunais'].apply(
@@ -210,63 +207,48 @@ incomuns_nomes['NR_CPF_CANDIDATO'] = (
         .str.pad(11, fillchar='0')
 )
 
-# concatenar os sobrenomes
+# concatenar os sobrenomes de cada político
 incomuns_nomes['sobrenomes_parciais'] = (
     incomuns_nomes['sobrenomes_parciais'].apply(ast.literal_eval)
 )
 
-# criar regex a partir dos sobrenomes
+# criar regex para cada político a partir de seus sobrenomes
 incomuns_nomes['regex'] = incomuns_nomes['sobrenomes_parciais'].apply(
-    lambda x: (f'.*\b({"|".join(x)})\b' if len(x) > 0 else None)
+    lambda x: (f'.*\\b({"|".join(x)})\\b' if len(x) > 0 else None)
 )
 incomuns_nomes = incomuns_nomes[incomuns_nomes['regex'].notnull()]
 
-# compor o nome completo
+# compor o nome completo para busca, incluindo os sobrenomes
 incomuns_nomes['regex'] = (
     '^'+incomuns_nomes['nome'].str.cat(incomuns_nomes['regex'])
 )
 
-# filtrar o banco de partes
+# filtrar o banco de partes apenas para os casos que ainda não foram
+#  identificados
 incomuns_partes = partes[partes['status_politico']==2]
-incomuns_partes = incomuns_partes[incomuns_partes['nome_normalizado'].notnull()]
+incomuns_partes = (
+    incomuns_partes[incomuns_partes['nome_normalizado'].notnull()]
+)
 incomuns_tuple = incomuns_partes[['index', 'nome_normalizado']]
 
 # separar nomes e sobrenomes
 lista01 = list(incomuns_nomes['regex'].to_frame().itertuples(name=None))
 lista02 = list(incomuns_tuple.itertuples(name=None, index=False))
-# lista02 = list(sample_partes[['index', 'nome_normalizado']].itertuples(name=None, index=False))
 
-# criar lista de correspondências
-correspondências00 = []
-
-# achar as correspondências
-for i, (idx01, nomes01) in enumerate(lista01):
+# achar correspondência
+correspondências = []
+for i, (idx01, nomes01) in enumerate(tqdm.tqdm(lista01)):
     for idx02, nomes02 in lista02:
         if re.search(re.compile(nomes01), nomes02):
-            correspondências00.append((idx01, idx02))
+            correspondências.append((idx01, idx02))
     if i % 1000 == 0:
         print(f'{i:05d} nomes parciais verificados.')
 
-with open(saida / 'correspondências_nomesparciais.pickle', 'wb') as fp:
+# salvar a correspondência de nomes parciais em disco
+with open('correspondência_nomesparcias.pickle', 'wb') as fp:
     pickle.dump(correspondências, fp)
 
-
-sample_nomes = incomuns_nomes.loc[[t for t, _ in correspondências],:]
-# sample_partes = incomuns_partes.loc[[t for _, t in correspondências],:]
-
-# sample_nomes['regex'] = sample_nomes['regex'].str.replace('.*(', '.*\\b(', regex=False)
-# sample_nomes['regex'] = sample_nomes['regex'].str.replace(')', ')\\b', regex=False)
-
-
-# import random
-# random.sample(correspondências, 1)
-
-incomuns_nomes.loc[10798,:]
-incomuns_partes.loc[859397, :]
-sample = r'^WELLINGTON.*\b(AU|NH)\b'
-re.search(sample, 'WELLINGTON PAULO DA CUNHA')
-
-########################################################################
+# ########################################################################
 
 #jogar fora o índice
 partes = partes.drop('index', axis=1)

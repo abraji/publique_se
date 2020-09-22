@@ -8,7 +8,7 @@ import pandas as pd, numpy as np
 import re, os
 
 #definir método principal
-if __name__ == '__main__':
+def main():
 
     #definir objetos comuns à análise
     kwargs = {
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         ['numero_cnj', 'nome_normalizado', 'status_politico']
     )
 
-    substr.groupby('status_politico').count()
+    # substr.groupby('status_politico').count()
 
     #jogar fora e substituir
     partes = partes.drop(substr['index'].tolist(), axis=0)
@@ -139,3 +139,7 @@ if __name__ == '__main__':
     #salvar os arquivos em disco
     status01.to_csv(saida / 'politicos_detalhes.csv', index=False, quoting=1)
     partes.to_csv(saida / 'politicos_partes.csv', index=False, quoting=1)
+
+# inserir bloco de execução
+if __name__ == '__main__':
+    main()

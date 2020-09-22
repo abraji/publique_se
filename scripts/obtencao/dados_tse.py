@@ -2,7 +2,7 @@ import os, requests
 from tqdm import tqdm
 
 # função para baixar candidatos do tse
-def baixar_candidatos(anos=[2016, 2018], destino='dados/entrada/'):
+def baixar_candidatos(anos=[2014, 2018], destino='dados/entrada/'):
 
     """ essa função baixa os dados dos candidatos do site do tse """
 

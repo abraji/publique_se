@@ -6,6 +6,43 @@ import re, os
 entrada = Path('dados/entrada')
 saida = Path('dados/saida')
 
+partes = pd.read_csv(saida / 'politicos_partes.csv', dtype=str)
+partes[partes['cpf'] == '93565968834']
+
+
+fname = saida / 'base08_qtdeprocessos.csv'
+fname = saida / 'base09_listaprocessos.csv'
+
+qtde = pd.read_csv(fname)
+lista = pd.read_csv(fname)
+qtde.drop_duplicates('cpf')
+
+lista.drop_duplicates('numero_unico_trib')
+
+df = partes[['numero_cnj', 'cpf', 'status_politico']]
+df = df[df['cpf'].notnull()]
+df = df[df['status_politico'] != '2']
+df['numero_cnj'] = df['numero_cnj'].replace(r'\W', '', regex=True)
+df\
+    .drop_duplicates(['numero_cnj', 'cpf'])\
+    .drop(columns=['status_politico'])\
+    .groupby('cpf')\
+    .count()\
+    .reset_index()\
+    .rename(columns={'numero_cnj': 'qt_processos'})\
+    .to_csv(fname, quoting=QUOTE_ALL, index=False)
+
+processos = pd.read_csv(saida / 'base09_listaprocessos.csv', dtype=str)
+
+processos.drop_duplicates('cpf')
+
+return df
+
+for row in movs[movs['numero_cnj']=='1011567-56.2015.8.26.0011'].iterrows():
+    print(row)
+
+movs[movs['numero_cnj']=='1011567-56.2015.8.26.0011'].reset_index().iloc[60:120,:]
+
 # checagem 1 karen
 [re.search(r'^base0.*', arqv) for arqv in os.listdir(saida)]
 base01 = pd.read_csv(saida / 'base01_processos.csv', dtype=str)
@@ -152,3 +189,23 @@ for row in sample.sort_values('numero_cnj').itertuples(name=None, index=False):
 
 
 
+
+#definir método para filtrar os potencias políticos com sobrenomes menos
+# comuns
+def filtrar_sobrenomes(nome):
+    correspondência = set(nome[1]) & sobrenomes_incomuns
+    if len(correspondência) > 1:
+        correspondência = '|'.join(correspondência)
+        correspondência = f'({correspondência})'
+    else:
+        correspondência = list(correspondência)[0]
+    nome_completo = f'^{nome[0]}.*{correspondência}'
+    return nome_completo
+
+#definir método para usar em pool apply e extrair nomes dos políticos
+def extrair_sobrenomes01(nome):
+    return nomesparciais[nomesparciais['nome1'].str.contains(nome)]
+
+#definir método para usar em pool apply e extrair nomes das partes
+def extrair_sobrenomes02(nome):
+    return origem_nomes[origem_nomes['nome_normalizado'].str.contains(nome)]

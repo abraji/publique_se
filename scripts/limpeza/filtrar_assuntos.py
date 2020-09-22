@@ -53,7 +53,7 @@ def confirmar_interesse(textos, assuntos, ramo_sim,  ramo_nao):
     return sim and nao
 
 #definir função principal
-if __name__ == '__main__':
+def main():
 
     #definir objetos comuns à análise
     entrada = Path('dados/entrada/')
@@ -135,8 +135,15 @@ if __name__ == '__main__':
     partes = partes.astype(str)
     movs = movs.astype(str)
 
+    #eliminar partes com nome nulo
+    partes = partes[partes['nome_normalizado'].notnull()]
+
     #salvar em disco
     kwargs = {'index': False, 'quoting': 1, 'float_format': '{:,.0f}'}
     detalhes.to_csv(entrada / 'politicos_detalhes.csv', **kwargs)
     partes.to_csv(entrada / 'politicos_partes.csv', **kwargs)
     movs.to_csv(saida / 'politicos_movs.csv', **kwargs)
+
+# inserir bloco de execução principal
+if __name__ == '__main__':
+    main()
