@@ -7,6 +7,7 @@ from pathlib import Path
 import ast, multiprocessing as mp, os, re, pickle
 
 #importar pacotes de terceiros
+import Levenshtein
 import pandas as pd, numpy as np
 import tqdm
 
@@ -197,7 +198,6 @@ partes.loc[idx03['index'], 'status_politico'] = 4
 partes.loc[idx02['index'], 'status_politico'] = 4
 partes.loc[idx01['index'], 'status_politico'] = 4
 
-########################################################################
 # carregar o banco de nomes incomuns
 incomuns_nomes = pd.read_csv(saida / 'incomuns_nomes.csv', dtype=str)
 incomuns_nomes['NR_CPF_CANDIDATO'] = (
@@ -235,20 +235,75 @@ incomuns_tuple = incomuns_partes[['index', 'nome_normalizado']]
 lista01 = list(incomuns_nomes['regex'].to_frame().itertuples(name=None))
 lista02 = list(incomuns_tuple.itertuples(name=None, index=False))
 
-# achar correspondência
-correspondências = []
-for i, (idx01, nomes01) in enumerate(tqdm.tqdm(lista01)):
-    for idx02, nomes02 in lista02:
-        if re.search(re.compile(nomes01), nomes02):
-            correspondências.append((idx01, idx02))
-    if i % 1000 == 0:
-        print(f'{i:05d} nomes parciais verificados.')
+# # achar correspondência
+# correspondências = []
+# for i, (idx01, nomes01) in enumerate(tqdm.tqdm(lista01)):
+#     if i > 14000:
+#         for idx02, nomes02 in lista02:
+#             if re.search(re.compile(nomes01), nomes02):
+#                 correspondências.append((idx01, idx02))
+#         if (i % 1000 == 0) or (i == len(lista01)-1):
+#             # salvar a correspondência de nomes parciais em disco
+#             filename = saida / f'correspondência_nomesparcias{i:05d}.pickle'
+#             with open(filename, 'wb') as fp:
+#                 pickle.dump(correspondências, fp)
+#             correspondências = []
 
-# salvar a correspondência de nomes parciais em disco
-with open('correspondência_nomesparcias.pickle', 'wb') as fp:
-    pickle.dump(correspondências, fp)
+# puxar os arquivos com as correspondências e uni-los num arquivo só
+arqvs = os.listdir(saida)
+arqvs = sorted(list(filter(lambda x: re.search(r'pickle', x), arqvs)))
+files = []
+for arqv in arqvs:
+    with open(saida / arqv, 'rb') as fp:
+        files.extend(pickle.load(fp))
 
-# ########################################################################
+# criar o banco de dados de correspondência de nomes parciais
+nomes_possiveis01 = pd.DataFrame(columns=['idx01', 'idx02'], data=files)
+
+# recriar nomes completos
+incomuns_nomes['nome_completo'] = (
+    incomuns_nomes['nome'].astype(str) + ' ' + incomuns_nomes['sobrenomes']
+)
+
+# puxar os nomes de políticos possíveis
+nomes_possiveis02 = incomuns_nomes.loc[nomes_possiveis01['idx01'].to_list(),:]
+nomes_possiveis02 = nomes_possiveis02[['NR_CPF_CANDIDATO', 'nome_completo']]
+
+# puxar os nomes de partes possíveis
+nomes_possiveis03 = incomuns_partes.loc[nomes_possiveis01['idx02'].to_list(),:]
+nomes_possiveis03 = nomes_possiveis03[['index', 'nome_normalizado']]
+
+# criar o banco de possíveis nomes
+nomes_possiveis = pd.concat([
+    nomes_possiveis02.reset_index(drop=True),
+    nomes_possiveis03.reset_index(drop=True)
+    ], axis=1
+)
+
+# computar a distância de levenshtein
+match = nomes_possiveis.iloc[:, [1,3]].itertuples(name=None, index=False)
+levenshtein = [Levenshtein.distance(*element) for element in match]
+nomes_possiveis['levenshtein'] = levenshtein
+
+# preservar apenas nomes com distância de edição menor do que 6
+possiveis = nomes_possiveis[nomes_possiveis['levenshtein'] < 6]
+possiveis = possiveis[['NR_CPF_CANDIDATO', 'index']]
+possiveis = possiveis.reset_index(drop=True)
+possiveis = possiveis.drop_duplicates('index')
+
+# substituir os potenciais matches de nomes parciais no banco
+# de partes adicionando o CPF
+partes.loc[possiveis['index'], 'cpf'] = possiveis['NR_CPF_CANDIDATO'].to_list()
+partes.loc[possiveis['index'], 'status_politico'] = 5
+
+# indicar políticos sem adicionar o cpf
+possiveis_semconfirmacao = (
+    nomes_possiveis[nomes_possiveis['levenshtein']==6]
+)[['NR_CPF_CANDIDATO', 'index']].drop_duplicates('index')
+
+# substituir os potenciais matches de nomes parciais no banco
+# de partes sem adicionar o CPF
+partes.loc[possiveis_semconfirmacao['index'], 'status_politico'] = 5
 
 #jogar fora o índice
 partes = partes.drop('index', axis=1)
@@ -283,10 +338,6 @@ for status in resultados.itertuples(name=None):
         f'Nº processos: {status[1]:>5}\n',
         f'Nº políticos: {status[2]:>5}\n\n'
     )
-
-#TO-DO
-#produzir outros matches
-#organizar assuntos para publicação no publique-se
 
 #importar tabela processual da união
 tpu = pd.read_excel(entrada / 'identificadores_tpu_avaliado.xlsx')

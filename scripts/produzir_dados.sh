@@ -37,7 +37,7 @@ python scripts/limpeza/filtrar_nomesparciais.py
 python scripts/limpeza/filtrar_politicos.py
 
 #abrir lotes para verificação
-python scripts/analise/selecionar_lotes.py --status_publiquese 3 4
+python scripts/analise/selecionar_lotes.py --status_publiquese 2 3 4
 
 #juntar a checagem manual e preparar os arquivos para subir no servidor
 python scripts/limpeza/consolidar_partes.py

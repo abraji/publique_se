@@ -373,7 +373,7 @@ def organizar_base05():
     }
 
     #carregar base de sócios de empresas (26 milhões de linhas)
-    rf_socios = pd.read_csv(f'{saida}rf_socios.csv', **kwargs_)
+    rf_socios = pd.read_csv(saida / 'rf_socios.csv', **kwargs_)
 
     #definir argumentos para carregar csv bem pesado de empresas
     kwargs_ = {
@@ -389,7 +389,7 @@ def organizar_base05():
     }
 
     #carregar base de empresas (41 milhões de linhas)
-    rf_empresas = pd.read_csv(f'{saida}rf_empresas.csv', **kwargs_)
+    rf_empresas = pd.read_csv(saida / 'rf_empresas.csv', **kwargs_)
 
     #juntar empresas e sócios
     rf_empresas = rf_empresas.merge(rf_socios, how='inner', on='cnpj')
@@ -641,31 +641,54 @@ if __name__ == '__main__':
 
     #criar base02_candidatos
     organizar_base02(movs)
+    print('base02 pronta.')
 
     #criar base03_partes
     partes = organizar_base03(partes, True)
+    print('base03 pronta.')
 
     #criar base04_candidatos
     organizar_base04()
+    print('base04 pronta.')
 
-    # #criar base05_politicos_empresas
-    # organizar_base05()
+    #criar base05_politicos_empresas
+    organizar_base05()
+    print('base05 pronta.')
 
     #criar base06_partes
     organizar_base06(partes)
+    print('base06 pronta.')
 
     #criar base07_partes
     assuntos = organizar_base07(detalhes, True)
+    print('base07 pronta.')
 
     #criar base01_processos
     organizar_base01(detalhes, organizar_base04.candidatos, partes, assuntos)
+    print('base01 pronta.')
 
     #criar base08_qtprocessos
     processos = organizar_base08()
+    print('base08 pronta.')
 
     #criar base09_listaprocessos
     organizar_base09(processos)
+    print('base09 pronta.')
 
     #criar base10_downloads
     # assuntos = ['Calúnia', 'Difamação', 'Injúria', '']
     organizar_base10()
+    print('base10 pronta.')
+
+    # print número de processos e políticos
+    politicos = pd.read_csv('dados/saida/base08_qtdeprocessos.csv')
+    print(
+        f'Número único de políticos: \
+        {len(politicos.drop_duplicates("cpf"))}.'
+    )
+    processos = pd.read_csv('dados/saida/base09_listaprocessos.csv')
+    print(
+        f'Número único de processos: \
+        {len(processos.drop_duplicates("numero_unico_trib"))}.'
+    )
+

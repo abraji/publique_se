@@ -1,4 +1,3 @@
--- carregar dados base01
 TRUNCATE TABLE processes;
 LOAD DATA LOCAL INFILE 'dados/saida/base01_processos.csv'
 INTO TABLE processes
@@ -37,7 +36,6 @@ IGNORE 1 LINES (
 ) SET created_at = NOW();
 SHOW WARNINGS;
 
--- carregar dados base02
 TRUNCATE TABLE moviments;
 LOAD DATA LOCAL INFILE 'dados/saida/base02_movimentacoes.csv'
 INTO TABLE moviments
@@ -58,7 +56,6 @@ IGNORE 1 LINES (
 SET created_at = NOW();
 SHOW WARNINGS;
 
--- carregar dados base03
 TRUNCATE TABLE parts;
 LOAD DATA LOCAL INFILE 'dados/saida/base03_partes.csv'
 INTO TABLE parts
@@ -82,7 +79,6 @@ IGNORE 1 LINES (
 SET created_at = NOW();
 SHOW WARNINGS;
 
--- carregar dados base04
 TRUNCATE TABLE politicians;
 LOAD DATA LOCAL INFILE 'dados/saida/base04_politicos.csv'
 INTO TABLE politicians
@@ -109,29 +105,27 @@ IGNORE 1 LINES (
 SET created_at = NOW();
 SHOW WARNINGS;
 
--- -- carregar dados base05
--- TRUNCATE TABLE companies;
--- LOAD DATA LOCAL INFILE 'dados/saida/base05_politicos_empresas.csv'
--- INTO TABLE companies
--- FIELDS TERMINATED BY ','
--- OPTIONALLY ENCLOSED BY '"'
--- LINES TERMINATED BY '\n'
--- IGNORE 1 LINES (
---   cnpj,
---   razao_social,
---   nome_fantasia,
---   NR_CPF_CANDIDATO,
---   situacao_cadastral,
---   uf,
---   municipio,
---   nome_socio,
---   cpf_socio,
---   cnae_fiscal,
---   data_atualizacao,
---   qualificacao_do_responsavel
--- );
+TRUNCATE TABLE companies;
+LOAD DATA LOCAL INFILE 'dados/saida/base05_politicos_empresas.csv'
+INTO TABLE companies
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES (
+  cnpj,
+  razao_social,
+  nome_fantasia,
+  NR_CPF_CANDIDATO,
+  situacao_cadastral,
+  uf,
+  municipio,
+  nome_socio,
+  cpf_socio,
+  cnae_fiscal,
+  data_atualizacao,
+  qualificacao_do_responsavel
+);
 
--- carregar dados base06
 TRUNCATE TABLE parts_processes;
 LOAD DATA LOCAL INFILE 'dados/saida/base06_partes_todas.csv'
 INTO TABLE parts_processes
@@ -148,7 +142,6 @@ IGNORE 1 LINES (
 SET created_at = NOW();
 SHOW WARNINGS;
 
--- carregar dados base07
 TRUNCATE TABLE base_7;
 LOAD DATA LOCAL INFILE 'dados/saida/base07_assuntos.csv'
 INTO TABLE base_7
@@ -163,7 +156,6 @@ IGNORE 1 LINES (
 SET created_at = NOW();
 SHOW WARNINGS;
 
--- carregar dados base08
 TRUNCATE TABLE politicians_processes_total;
 LOAD DATA LOCAL INFILE 'dados/saida/base08_qtdeprocessos.csv'
 INTO TABLE politicians_processes_total
@@ -177,7 +169,6 @@ IGNORE 1 LINES (
 SET created_at = NOW();
 SHOW WARNINGS;
 
--- carregar dados base09
 TRUNCATE TABLE politicians_processes;
 LOAD DATA LOCAL INFILE 'dados/saida/base09_listaprocessos.csv'
 INTO TABLE politicians_processes
