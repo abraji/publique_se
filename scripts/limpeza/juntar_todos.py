@@ -119,9 +119,9 @@ def main():
     movs = movs.astype(str)
 
     #salvar em arguivo
-    detalhes.to_csv(saida / 'processos_detalhes.csv', **outkwargs)
-    partes.to_csv(saida / 'processos_partes.csv', **outkwargs)
-    movs.to_csv(saida / 'processos_movs.csv', **outkwargs)
+    detalhes.to_csv(saida / 'processos01_detalhes.csv', **outkwargs)
+    partes.to_csv(saida / 'processos01_partes.csv', **outkwargs)
+    movs.to_csv(saida / 'processos01_movs.csv', **outkwargs)
 
 #criar bloco de execução
 if __name__ == '__main__': main()

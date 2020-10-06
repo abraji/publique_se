@@ -651,9 +651,9 @@ if __name__ == '__main__':
     organizar_base04()
     print('base04 pronta.')
 
-    #criar base05_politicos_empresas
-    organizar_base05()
-    print('base05 pronta.')
+    # #criar base05_politicos_empresas
+    # organizar_base05()
+    # print('base05 pronta.')
 
     #criar base06_partes
     organizar_base06(partes)
@@ -679,16 +679,3 @@ if __name__ == '__main__':
     # assuntos = ['Calúnia', 'Difamação', 'Injúria', '']
     organizar_base10()
     print('base10 pronta.')
-
-    # print número de processos e políticos
-    politicos = pd.read_csv('dados/saida/base08_qtdeprocessos.csv')
-    print(
-        f'Número único de políticos: \
-        {len(politicos.drop_duplicates("cpf"))}.'
-    )
-    processos = pd.read_csv('dados/saida/base09_listaprocessos.csv')
-    print(
-        f'Número único de processos: \
-        {len(processos.drop_duplicates("numero_unico_trib"))}.'
-    )
-

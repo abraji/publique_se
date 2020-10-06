@@ -27,6 +27,7 @@ python scripts/obtencao/juntar_digesto.py --tribunais outrosextra
 
 #juntar os dados dos tribunais superiores com os processos relacionados
 python scripts/limpeza/juntar_todos_outros.py
+python scripts/limpeza/juntar_tribunais.py
 
 #limpar os dados para subir na plataforma do publique-se
 python scripts/limpeza/filtrar_assuntos.py
@@ -37,7 +38,7 @@ python scripts/limpeza/filtrar_nomesparciais.py
 python scripts/limpeza/filtrar_politicos.py
 
 #abrir lotes para verificação
-python scripts/analise/selecionar_lotes.py --status_publiquese 2 3 4
+python scripts/analise/selecionar_lotes.py --status_publiquese 3 4 5
 
 #juntar a checagem manual e preparar os arquivos para subir no servidor
 python scripts/limpeza/consolidar_partes.py

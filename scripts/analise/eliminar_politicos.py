@@ -41,6 +41,17 @@ def main():
         # mudar lista de processos
         contagem = contagem[~contagem['cpf'].isin(cpf)]
 
+
+    # print número de processos e políticos
+    print(
+        f'Número único de políticos: \
+        {len(qtde.drop_duplicates("cpf"))}.'
+    )
+    print(
+        f'Número único de processos: \
+        {len(contagem.drop_duplicates("numero_unico_trib"))}.'
+    )
+
     # salvar arquivos de partes, quantidade e contagem
     kwargs = {'quoting':1, 'index': False}
     partes.to_csv(saida / 'base06_partes_todas.csv', **kwargs)

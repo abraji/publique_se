@@ -42,7 +42,7 @@ def main():
     arqvs = [arqv for path in arqvs for arqv in path]
     regex = re.compile(r'_partes_')
     arqvs = list(filter(regex.search, arqvs))
-    regex = re.compile(r'(\d){1,2}(_partes)')
+    regex = re.compile(r'(\d{3})(_partes)')
     arqvs = [
         str(saida / f'checagens/lote{re.search(regex, path).group(1)}' / path)
         for i, path in enumerate(arqvs)

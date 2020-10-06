@@ -36,7 +36,7 @@ def main():
     arqvs = [arqv for path in arqvs for arqv in path]
     regex = re.compile(r'_partes_')
     arqvs = list(filter(regex.search, arqvs))
-    regex = re.compile(r'(\d){1,2}(_partes)')
+    regex = re.compile(r'(\d{3})(_partes)')
     arqvs = [
         str(saida / f'checagens/lote{re.search(regex, path).group(1)}' / path)
         for i, path in enumerate(arqvs)
@@ -52,7 +52,7 @@ def main():
     já_checados = set(checagem['numero_cnj'])
     detalhes = detalhes[~detalhes['numero_cnj'].isin(já_checados)]
     partes = partes[~partes['numero_cnj'].isin(já_checados)]
-    # args = {'status_publiquese': [3, 4]}
+    # args = {'status_publiquese': [3, 4, 5]}
     #recuperar argumento da linha de comando
     if isinstance(args['status_publiquese'], int):
         filtro = [args['status_publiquese']]
@@ -70,8 +70,8 @@ def main():
     partes = partes[partes['numero_cnj'].isin(detalhes['numero_cnj'])]
 
     #definir onde começar o próximo lote
-    lote_atual = re.search(r'(lote)(\d{1,2})', str(arqvs[-1])).group(2)
-    lote_prox = str(int(lote_atual)+1)
+    lote_atual = re.search(r'(lote)(\d{3})', str(arqvs[-1])).group(2)
+    lote_prox = f'{int(lote_atual)+1:03}'
 
     #criar o novo folder
     try:

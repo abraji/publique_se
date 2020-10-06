@@ -25,12 +25,12 @@ def consertar_cnj(cnj):
         return cnj
 
 #definir método para carregar stf
-def carregar_processos(saida, kwargs):
-    string = r'^processos_(detalhes|partes|movs)'
+def achar_processos(saida):
+    string = r'^processos0\d_(detalhes|partes|movs)'
     regex = re.compile(string)
     arqvs = list(filter(regex.search, os.listdir(saida)))
     arqvs = sorted([os.path.join(saida, arqv) for arqv in arqvs])
-    return [pd.read_csv(arqv, **kwargs) for arqv in arqvs]
+    return arqvs
 
 #definir método para separar assuntos jurídicos
 def _split_assunto(textos, ramo_sim):
@@ -60,18 +60,29 @@ def main():
     saida = Path('dados/saida/')
     kwargs = {'quoting': 1, 'low_memory': False, 'dtype': str}
 
-    ##### USAR SE OUTROS NÃO TIVEREM SIDO INCLUÍDOS
     #carregar bancos de processos
-    detalhes, movs, partes = carregar_processos(saida, kwargs)
+    arqvs = achar_processos(saida)
 
-    ##### USAR SE OUTROS JÁ TIVEREM SIDO INCLUÍDOS
-    #unpickle bancos
-    # detalhes, movs, partes = dados[::3], dados[1::3], dados[2::3]
+    # extrair bancos
+    detalhes = list(map(pd.read_csv, arqvs[::3]))
+    partes = list(map(pd.read_csv, arqvs[2::3]))
+    movs = list(map(pd.read_csv, arqvs[1::3]))
 
-    # #concatenar
-    # detalhes = pd.concat(detalhes)
-    # partes = pd.concat(partes)
-    # movs = pd.concat(movs)
+    # corrigir partes
+    partes[2] = partes[2].rename(columns={'id': 'processoID'})
+    partes[2] = partes[2].drop(columns='id.1')
+
+
+    # concatenar os bancos
+    detalhes = pd.concat(detalhes, ignore_index=True)
+    partes = pd.concat(partes, ignore_index=True)
+
+    # corrigir movs
+    match = detalhes[['numero_cnj', 'processoID', 'tribunal', 'instancia']]
+    movs[2] = movs[2].merge(match, on='numero_cnj', how='left')
+
+    # concatenar movimentações
+    movs = pd.concat(movs, ignore_index=True)
 
     #arrumar cpf
     detalhes['cpf'] = detalhes['cpf']\

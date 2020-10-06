@@ -75,7 +75,7 @@ if __name__ == '__main__':
     movs = movs.astype(str)
 
     #salvar em arguivo
-    detalhes.to_csv(saida / 'processosoutros_detalhes.csv', **kwargs)
-    partes.to_csv(saida / 'processosoutros_partes.csv', **kwargs)
-    movs.to_csv(saida / 'processosoutros_movs.csv', **kwargs)
+    detalhes.to_csv(saida / 'processos02_detalhes.csv', **kwargs)
+    partes.to_csv(saida / 'processos02_partes.csv', **kwargs)
+    movs.to_csv(saida / 'processos02_movs.csv', **kwargs)
 

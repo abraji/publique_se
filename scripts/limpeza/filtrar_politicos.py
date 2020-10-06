@@ -235,27 +235,29 @@ incomuns_tuple = incomuns_partes[['index', 'nome_normalizado']]
 lista01 = list(incomuns_nomes['regex'].to_frame().itertuples(name=None))
 lista02 = list(incomuns_tuple.itertuples(name=None, index=False))
 
-# # achar correspondência
-# correspondências = []
-# for i, (idx01, nomes01) in enumerate(tqdm.tqdm(lista01)):
-#     if i > 14000:
-#         for idx02, nomes02 in lista02:
-#             if re.search(re.compile(nomes01), nomes02):
-#                 correspondências.append((idx01, idx02))
-#         if (i % 1000 == 0) or (i == len(lista01)-1):
-#             # salvar a correspondência de nomes parciais em disco
-#             filename = saida / f'correspondência_nomesparcias{i:05d}.pickle'
-#             with open(filename, 'wb') as fp:
-#                 pickle.dump(correspondências, fp)
-#             correspondências = []
+# adicionar checagem alfabética para agilizar correspondência
+lista01 = sorted(
+    [(*element, element[1][1]) for element in lista01], key=lambda x: x[1]
+)
+lista02 = sorted(
+    [(*element, element[1][0]) for element in lista02], key=lambda x: x[1]
+)
 
-# puxar os arquivos com as correspondências e uni-los num arquivo só
-arqvs = os.listdir(saida)
-arqvs = sorted(list(filter(lambda x: re.search(r'pickle', x), arqvs)))
-files = []
-for arqv in arqvs:
-    with open(saida / arqv, 'rb') as fp:
-        files.extend(pickle.load(fp))
+# # achar correspondência
+# correspondências = [] #, reindex = ['a', 'A', 'A'], 0
+# for i, item01 in enumerate(tqdm.tqdm(lista01)):
+#     for item02 in lista02:
+#         if item01[2] == item02[2]:
+#             if re.search(re.compile(item01[1]), item02[1]):
+#                 correspondências.append((item01[0], item02[0]))
+
+# # salvar em disco
+# with open(saida / f'correspondência_nomesparcias.pickle', 'wb') as fp:
+#     pickle.dump(correspondências, fp)
+
+# puxar o arquivo com as correspondências e uni-los num arquivo só
+with open(saida / f'correspondência_nomesparcias.pickle', 'rb') as fp:
+    files = pickle.load(fp)
 
 # criar o banco de dados de correspondência de nomes parciais
 nomes_possiveis01 = pd.DataFrame(columns=['idx01', 'idx02'], data=files)
@@ -273,6 +275,13 @@ nomes_possiveis02 = nomes_possiveis02[['NR_CPF_CANDIDATO', 'nome_completo']]
 nomes_possiveis03 = incomuns_partes.loc[nomes_possiveis01['idx02'].to_list(),:]
 nomes_possiveis03 = nomes_possiveis03[['index', 'nome_normalizado']]
 
+# eliminar "PRESO" do nome normalizado
+nomes_possiveis03['nome_normalizado'] = (
+    nomes_possiveis03['nome_normalizado'].str.replace(
+        r' PRESO$', '', regex=True
+    )
+)
+
 # criar o banco de possíveis nomes
 nomes_possiveis = pd.concat([
     nomes_possiveis02.reset_index(drop=True),
@@ -285,8 +294,8 @@ match = nomes_possiveis.iloc[:, [1,3]].itertuples(name=None, index=False)
 levenshtein = [Levenshtein.distance(*element) for element in match]
 nomes_possiveis['levenshtein'] = levenshtein
 
-# preservar apenas nomes com distância de edição menor do que 6
-possiveis = nomes_possiveis[nomes_possiveis['levenshtein'] < 6]
+# preservar apenas nomes com distância de edição menor do que 4
+possiveis = nomes_possiveis[nomes_possiveis['levenshtein'] < 4]
 possiveis = possiveis[['NR_CPF_CANDIDATO', 'index']]
 possiveis = possiveis.reset_index(drop=True)
 possiveis = possiveis.drop_duplicates('index')
@@ -298,7 +307,7 @@ partes.loc[possiveis['index'], 'status_politico'] = 5
 
 # indicar políticos sem adicionar o cpf
 possiveis_semconfirmacao = (
-    nomes_possiveis[nomes_possiveis['levenshtein']==6]
+    nomes_possiveis[nomes_possiveis['levenshtein']==4]
 )[['NR_CPF_CANDIDATO', 'index']].drop_duplicates('index')
 
 # substituir os potenciais matches de nomes parciais no banco
