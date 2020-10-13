@@ -1,4 +1,7 @@
 #!/bin/bash
+#ativar environment
+conda activate publique-se
+
 #obter e limpar dados do tse
 python scripts/obtencao/dados_tse.py
 python scripts/limpeza/limpar_tse.py

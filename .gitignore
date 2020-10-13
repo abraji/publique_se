@@ -6,6 +6,8 @@ website
 __pycache__
 *.empty
 *.ipynb_checkpoints
+*credentials.json
+*token.pickle
 
 #py files
 publiquese
