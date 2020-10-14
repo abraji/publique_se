@@ -71,7 +71,7 @@ def main():
     partes00 = partes.copy()
 
     # importar participantes do desafio
-    participantes = pd.read_csv(SAIDA / 'checagens/00_participantes.csv')
+    participantes = pd.read_csv(SAIDA / 'checagens/01_participantes.csv')
     participante = list(participantes.itertuples(name=None))[1]
 
     # definir arquivos de folders para merge futuro
@@ -99,7 +99,7 @@ def main():
         path_detalhes = folder / f'lote{idx}_detalhes.xlsx'
 
         # selecionar as colunas dos bancos
-        colunas_detalhes, colunas_partes = [
+        cols_detalhes, cols_partes = [
             'numeroAlternativo', 'juiz', 'area', 'assuntoExtra', 'comarca',
             'tribunal', 'distribuicaoData', 'segredo_justica', 'arquivado',
             'classes', 'numero_cnj'
@@ -109,8 +109,8 @@ def main():
         ]
 
         # salvar planilhas
-        sorteados_partes[colunas_partes].to_excel(path_partes, index=False)
-        sorteados_detalhes[colunas_detalhes].to_excel(path_detalhes,index=False)
+        sorteados_partes[col_partes].to_excel(path_partes, index=False)
+        sorteados_detalhes[col_detalhes].to_excel(path_detalhes,index=False)
 
         # filtrar sorteados
         detalhes = detalhes.loc[~detalhes.index.isin(sorteados_detalhes.index)]
@@ -126,9 +126,8 @@ def main():
     )
 
     # salvar em disco
-    participantes.to_csv(
-        CHECAGEM / '01_participantes.csv', index=False, quoting=1
-    )
+    kwargs = {'index': False, 'quoting': 1}
+    participantes.to_csv(CHECAGEM / '02_participantes.csv', **kwargs) # ADD APPEND ARG
 
 # inserir bloco de execução principal
 if __name__ == '__main__':

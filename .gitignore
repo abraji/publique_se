@@ -8,6 +8,7 @@ __pycache__
 *.ipynb_checkpoints
 *credentials.json
 *token.pickle
+*planilha.txt
 
 #py files
 publiquese

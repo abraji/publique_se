@@ -19,13 +19,16 @@ def main():
         'https://www.googleapis.com/auth/documents'
     ]
 
-    # define the ID of the survey
-    survey = '1jtUCSXsCQ32_kJQc5ZXCQd0RVgZ_yCriUfy4370Dvt4'
-    responses = 'Form Responses 1!A:C' #  EDITAR ESTE ESCOPO DE RESPOSTAS
-
-    # use token with credentials to log int
+    # use token with credentials to log into google docs
     with open(SCRIPTS / 'token.pickle', 'rb') as token:
         creds = pickle.load(token)
+
+    # define the ID of the survey
+    with open(SCRIPTS / 'planilha.txt', 'r') as fp:
+        survey = fp.readline()[:-1]
+
+    # define scope of responses
+    responses = 'Form Responses 1!A:C' #  EDITAR ESTE ESCOPO DE RESPOSTAS
 
     # build service
     service = build('sheets', 'v4', credentials=creds)
@@ -51,6 +54,7 @@ def main():
     # save to file
     kwargs = {'index': False, 'quoting': 1}
     checadores.to_csv(CHECAGEM / '00_participantes.csv', **kwargs)
+    participantes.to_csv(CHECAGEM / '01_participantes.csv', **kwargs)
 
 # include main execution block
 if __name__ == '__main__':
