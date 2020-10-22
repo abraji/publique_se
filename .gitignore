@@ -9,6 +9,7 @@ __pycache__
 *credentials.json
 *token.pickle
 *planilha.txt
+*drive.json
 
 #py files
 publiquese

@@ -1,8 +1,9 @@
-#importar pacotes
+# importar pacotes
 from pathlib import Path
 import argparse
-import pandas as pd
 import re, os
+
+import pandas as pd
 
 # definir função principal
 def main():
@@ -22,7 +23,7 @@ def main():
     descrição = 'Defina quais tipos de processos devem ser filtrados.'
     parser = argparse.ArgumentParser(description=descrição)
     parser.add_argument('--status_publiquese', type=int, default=2, nargs='+')
-    parser.add_argument('--tamanho', type=int, default=100, nargs=1)
+    parser.add_argument('--tamanho', type=int, default=100, nargs='?')
     args = vars(parser.parse_args())
 
     # importar dados
@@ -42,7 +43,7 @@ def main():
                 fp.extend([planilha])
 
     # filtrar e selecionar só os arquivos de partes
-    fps = sorted(list(filter(lambda x: re.search(r'_partes_', x), fp)))
+    fps = sorted(list(filter(lambda x: re.search(r'_partes', x), fp)))
     fps = list(map(Path, fps))
     last_folder = int(os.path.split(fps[-1])[0][-3:])
 
@@ -72,7 +73,6 @@ def main():
 
     # importar participantes do desafio
     participantes = pd.read_csv(SAIDA / 'checagens/01_participantes.csv')
-    participante = list(participantes.itertuples(name=None))[1]
 
     # definir arquivos de folders para merge futuro
     folders = []
@@ -109,8 +109,8 @@ def main():
         ]
 
         # salvar planilhas
-        sorteados_partes[col_partes].to_excel(path_partes, index=False)
-        sorteados_detalhes[col_detalhes].to_excel(path_detalhes,index=False)
+        sorteados_partes[cols_partes].to_excel(path_partes, index=False)
+        sorteados_detalhes[cols_detalhes].to_excel(path_detalhes,index=False)
 
         # filtrar sorteados
         detalhes = detalhes.loc[~detalhes.index.isin(sorteados_detalhes.index)]

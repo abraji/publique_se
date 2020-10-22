@@ -1,8 +1,8 @@
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
+# importar pacotes
 from pathlib import Path
 import json, pickle, re, os
+
+from googleapiclient.discovery import build
 import pandas as pd
 
 # define main function
@@ -13,19 +13,14 @@ def main():
     SCRIPTS = ROOT / 'scripts'
     CHECAGEM = ROOT / 'dados/saida/checagens'
 
-    # define acess scopes
-    SCOPES = [
-        'https://www.googleapis.com/auth/drive',
-        'https://www.googleapis.com/auth/documents'
-    ]
-
     # use token with credentials to log into google docs
     with open(SCRIPTS / 'token.pickle', 'rb') as token:
         creds = pickle.load(token)
 
     # define the ID of the survey
-    with open(SCRIPTS / 'planilha.txt', 'r') as fp:
-        survey = fp.readline()[:-1]
+    with open(SCRIPTS / 'drive.json', 'r') as fp:
+        drive_ = json.load(fp)
+        survey = drive_['planilha']
 
     # define scope of responses
     responses = 'Form Responses 1!A:C' #  EDITAR ESTE ESCOPO DE RESPOSTAS
@@ -44,6 +39,7 @@ def main():
     # build participants list
     data = results['values']
     participantes = pd.DataFrame(columns=data[0], data=data[1:])
+    participantes = participantes.dropna(axis=0).reset_index(drop=True)
 
     # load and check who has received files
     checadores = pd.read_csv(CHECAGEM / '00_participantes.csv')

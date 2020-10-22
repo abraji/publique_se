@@ -35,6 +35,9 @@ python scripts/limpeza/juntar_tribunais.py
 #limpar os dados para subir na plataforma do publique-se
 python scripts/limpeza/filtrar_assuntos.py
 
+# #salvar banco de políticos de 2020
+python scripts/analise/abrir_candidatos.py
+
 #analisar os dados
 Rscript scripts/analise/nomes_politicos.R
 python scripts/limpeza/filtrar_nomesparciais.py
