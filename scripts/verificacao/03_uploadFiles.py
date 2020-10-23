@@ -88,10 +88,11 @@ def main():
             file = file.create(body=infile_metadata, media_body=spreadsheet)
             file = file.execute()
 
-        print(f'Pasta criada: {participant._0:>30} ')
+        print(f'Pasta criada: {participant._0:>30}')
 
     # add folder ID to list of participants
     upload['folderID'] = folderIDs
+
     participants = pd.read_csv(CHECAGEM / '00_participantes.csv')
 
     # concatenate and save
@@ -99,10 +100,11 @@ def main():
     participants = participants.dropna(subset=['folderID'])
 
     # save to disk
+    upload.to_csv(CHECAGEM / '03_participantes.csv', index=False, quoting=1)
     participants.to_csv(
         CHECAGEM / '00_participantes.csv', index=False, quoting=1
     )
 
-# inserir bloco de execução principal
+# insert execution block
 if __name__ == '__main__':
     main()
