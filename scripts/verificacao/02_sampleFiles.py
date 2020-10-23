@@ -5,7 +5,7 @@ import re, os
 
 import pandas as pd
 
-# definir função principal
+# define main function
 def main():
 
     # definir path
