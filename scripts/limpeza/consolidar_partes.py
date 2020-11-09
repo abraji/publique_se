@@ -31,14 +31,22 @@ def main():
         converters={'NR_CPF_CANDIDATO': lambda x: str(x).rjust(11)}
     )
 
-    politicos['NR_CPF_CANDIDATO'] = (
-        politicos['NR_CPF_CANDIDATO']
+    politicos2016['NR_CPF_CANDIDATO'] = (
+        politicos2016['NR_CPF_CANDIDATO']
+            .apply(lambda x: str(x) if not pd.isnull(x) else x)
+            .replace(r' *', '', regex=True)
+            .str.pad(11, fillchar='0')
+    )
+    politicos2020['NR_CPF_CANDIDATO'] = (
+        politicos2020['NR_CPF_CANDIDATO']
             .apply(lambda x: str(x) if not pd.isnull(x) else x)
             .replace(r' *', '', regex=True)
             .str.pad(11, fillchar='0')
     )
 
-    cpfs = set(politicos.NR_CPF_CANDIDATO.to_list())
+    politicos = politicos2016.NR_CPF_CANDIDATO.to_list()
+    politicos.extend(politicos2020.NR_CPF_CANDIDATO.to_list())
+    cpfs = set(politicos)
 
     #carregar os arquivos de checagens
     arqvs = [arqvs for _, _, arqvs in os.walk(saida / 'checagens_final')]
@@ -51,7 +59,7 @@ def main():
         str(saida/f'checagens_final/lote{re.search(regex, path).group(1)}'/path)
         for i, path in enumerate(arqvs)
     ]
-    arqvs = [Path(arqv) for arqv in arqvs]
+    arqvs = sorted([Path(arqv) for arqv in arqvs])
 
     #carregar os dados
     check = pd.concat(

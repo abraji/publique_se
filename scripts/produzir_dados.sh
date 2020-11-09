@@ -59,7 +59,7 @@ python scripts/verificacao/05_downloadFiles.py
 python scripts/verificacao/06_integratePubliquese.py
 
 #juntar a checagem manual e preparar os arquivos para subir no servidor
-python scripts/limpeza/consolidar_partes.py
+# python scripts/limpeza/consolidar_partes.py
 python scripts/limpeza/limpar_publiquese.py
 
 #rotina para eliminar políticos
