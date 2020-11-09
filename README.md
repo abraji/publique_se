@@ -4,7 +4,7 @@ Programas utilizados no projeto Publique-se. Os únicos programas excluídos sã
 # replicação
 Para recriar a análise do Publique-se, você deve ter a distribuição Anaconda instalada e criar o ambiente Python do requirements.yml
 
-```
+```python
 # crie o ambiente
 conda env create -f requirements.yml
 
