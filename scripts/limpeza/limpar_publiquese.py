@@ -51,7 +51,8 @@ def utf8_ascii(var):
 
 #criar função para organizar base01_processos
 def organizar_base01(detalhes, candidatos, partes, assuntos, retorno=False):
-
+    # detalhes, organizar_base04.candidatos, partes, assuntos
+    # candidatos = organizar_base04.candidatos.copy()
     #filtrar apenas os casos de interesse
     detalhes = detalhes[detalhes['status_publiquese'] != '2']
     detalhes.drop('status_publiquese', axis=1, inplace=True)
@@ -101,6 +102,7 @@ def organizar_base01(detalhes, candidatos, partes, assuntos, retorno=False):
     colunas = list(detalhes.columns) + extras
 
     #juntar com partes para puxar as informações das partes
+    partes = partes[partes['cpf'].notnull()]
     processos = detalhes.merge(partes, how='inner', on='cpf')
 
     #juntar com candidatos para puxar nomes de urna
