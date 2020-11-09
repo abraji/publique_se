@@ -35,7 +35,7 @@ def main():
 
     # load list of users
     participants = pd.read_csv(CHECAGEM / '03_participantes.csv')
-    participants = participants[['Email Address', 'folderID']].copy()
+    participants = participants[['email', 'folderID']].copy()
 
     # build service
     service = build('drive', 'v3', credentials=creds)

@@ -37,7 +37,7 @@ def main():
 
     # carregar lista de checadores
     upload = pd.read_csv(CHECAGEM / '02_participantes.csv')
-    participants = upload[['Email Address', 'folder']].copy()
+    participants = upload[['email', 'folder']].copy()
 
     # create list of folder IDs to download files later
     folderIDs = []
@@ -88,7 +88,7 @@ def main():
             file = file.create(body=infile_metadata, media_body=spreadsheet)
             file = file.execute()
 
-        print(f'Pasta criada: {participant._0:>30}')
+        print(f'Pasta criada: {participant.email:>30}')
 
     # add folder ID to list of participants
     upload['folderID'] = folderIDs

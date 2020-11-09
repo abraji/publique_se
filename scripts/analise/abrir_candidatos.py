@@ -54,7 +54,9 @@ def main():
     kwargs = {'low_memory': False, 'dtype': str}
 
     # importar bases de políticos de 2020
-    cand2020 = pd.read_csv(entrada / 'candidatos_eleicoes_2020.csv', **kwargs)
+    # cand2020 = pd.read_csv(entrada / 'candidatos_eleicoes_2020.csv', **kwargs)
+    arqv = entrada / 'candidatos_2020_6_nov_2020_versao_resumida.xlsx'
+    cand2020 = pd.read_excel(arqv, dtype=str)
 
     # filtrar colunas
     colunas = [
@@ -114,9 +116,11 @@ def main():
 
     # stats
     print(
-        f'Políticos Únicos:\t{len(candidatos2020_partes["cpf"].drop_duplicates())}\nProcessos Únicos:\t{len(detalhes["numero_cnj"])}'
+        'Políticos Únicos:\t{}\nProcessos Únicos:\t{}'.format(
+            len(candidatos2020_partes["cpf"].drop_duplicates()),
+            len(detalhes["numero_cnj"])
+        )
     )
-
     # salvar
     candidatos2020_partes.to_excel(
         entrada / 'processos_candidatos2020_partes.xlsx', index=False

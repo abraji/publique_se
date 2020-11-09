@@ -20,10 +20,10 @@ def main():
     # define the ID of the survey
     with open(SCRIPTS / 'drive.json', 'r') as fp:
         drive_ = json.load(fp)
-        survey = drive_['planilha']
+        survey = drive_['selecionados']
 
     # define scope of responses
-    responses = 'Form Responses 1!A:C' #  EDITAR ESTE ESCOPO DE RESPOSTAS
+    responses = 'Sheet1!A:W' #  EDITAR ESTE ESCOPO DE RESPOSTAS
 
     # build service
     service = build('sheets', 'v4', credentials=creds)
@@ -43,8 +43,10 @@ def main():
 
     # load and check who has received files
     checadores = pd.read_csv(CHECAGEM / '00_participantes.csv')
-    emails = checadores['Email Address'].to_list()
-    participantes = participantes[~participantes['Email Address'].isin(emails)]
+    emails = checadores['email'].to_list()
+    participantes = (
+        participantes[~participantes['email'].isin(emails)]
+    )
     checadores = pd.concat([checadores, participantes])
 
     # save to file

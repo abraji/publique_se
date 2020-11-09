@@ -23,13 +23,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--freq', type=int, default=10, nargs=1)
     args = vars(parser.parse_args())
-
+    args['freq'] = 5
     # definir folder de saida
     saida = Path('dados/saida/')
 
     # carregar nomes e candidatos
     nomes = pd.read_csv(saida / 'candidatos_nomes.csv')
-    candidatos = pd.read_csv(saida / 'candidatos_info.csv')
+    candidatos = pd.read_csv(saida / 'candidatos_info.csv', dtype=str)
 
     # puxar as frequências para os nomes
     candidatos = (
@@ -43,6 +43,7 @@ def main():
     candidatos[['nome', 'sobrenomes']] = (
         candidatos['nome'].str.split(' ', 1, True)
     )
+    candidatos = candidatos.dropna(subset=['nome', 'sobrenomes'])
 
     # criar lista de sobrenomes
     sobrenomes = candidatos['sobrenomes'].to_list()

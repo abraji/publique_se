@@ -68,9 +68,6 @@ def main():
     )
     detalhes = detalhes[detalhes['status_publiquese'].isin(filtro)]
 
-    detalhes00 = detalhes.copy()
-    partes00 = partes.copy()
-
     # importar participantes do desafio
     participantes = pd.read_csv(SAIDA / 'checagens/01_participantes.csv')
 
@@ -127,7 +124,7 @@ def main():
 
     # salvar em disco
     kwargs = {'index': False, 'quoting': 1}
-    participantes.to_csv(CHECAGEM / '02_participantes.csv', **kwargs) # ADD APPEND ARG
+    participantes.to_csv(CHECAGEM / '02_participantes.csv', **kwargs)
 
 # inserir bloco de execução principal
 if __name__ == '__main__':

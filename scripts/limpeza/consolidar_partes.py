@@ -22,8 +22,12 @@ def main():
     partes = pd.read_csv(entrada / 'politicos_partesFiltrado.csv', **kwargs)
 
     #carregar base de políticos
-    politicos = pd.read_excel(
+    politicos2016 = pd.read_excel(
         entrada / 'politicos_2016_2018_100maiorescidades_para_producao.xlsx',
+        converters={'NR_CPF_CANDIDATO': lambda x: str(x).rjust(11)}
+    )
+    politicos2020 = pd.read_excel(
+        entrada / 'candidatos_2020_100maiorescidades_para_producao.xlsx',
         converters={'NR_CPF_CANDIDATO': lambda x: str(x).rjust(11)}
     )
 
@@ -37,14 +41,14 @@ def main():
     cpfs = set(politicos.NR_CPF_CANDIDATO.to_list())
 
     #carregar os arquivos de checagens
-    arqvs = [arqvs for _, _, arqvs in os.walk(saida / 'checagens')]
+    arqvs = [arqvs for _, _, arqvs in os.walk(saida / 'checagens_final')]
     arqvs = sorted(arqvs)
     arqvs = [arqv for path in arqvs for arqv in path]
     regex = re.compile(r'_partes_')
     arqvs = list(filter(regex.search, arqvs))
     regex = re.compile(r'(\d{3})(_partes)')
     arqvs = [
-        str(saida / f'checagens/lote{re.search(regex, path).group(1)}' / path)
+        str(saida/f'checagens_final/lote{re.search(regex, path).group(1)}'/path)
         for i, path in enumerate(arqvs)
     ]
     arqvs = [Path(arqv) for arqv in arqvs]
