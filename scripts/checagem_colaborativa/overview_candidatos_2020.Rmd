@@ -1,0 +1,113 @@
+---
+title: "Candidatos nas eleições de 2020 (considerados na amostra do Publique-se - veja metodologia)"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+
+---
+
+```{r global, include=FALSE}
+library(flexdashboard)
+library(DT)
+library(tidyverse)
+library(shiny)
+#library(plotly)
+#library(wordcloud2)
+#library(tm)
+library(aws.s3)
+library(readxl)
+
+# -*- coding: utf-8
+# Abraji (https://www.abraji.org.br)
+# Reinaldo Chaves (reinaldo@abraji.org.br)
+# Programa para criar uma visualização dos candidatos nas eleições 2020
+# Iniciativa para ajudar o programa de checadores do Publique-se
+# https://reichaves.shinyapps.io/overview_candidatos_2020/
+#
+
+# Uso do shiny e flexdashboard:
+# https://beatrizmilz.com/post/desenvolvendo-meu-primeiro-shiny-app/
+# https://shiny.rstudio.com/articles/shinyapps.html
+
+
+# Credenciais para acessar o arquivo de candidatos no AWS
+# Veja mais: https://cran.r-project.org/web/packages/aws.signature/readme/README.html
+# https://seankross.com/2017/05/02/Access-Amazon-Web-Services-in-R.html
+
+Sys.setenv("AWS_ACCESS_KEY_ID" = "",
+           "AWS_SECRET_ACCESS_KEY" = "",
+           "AWS_DEFAULT_REGION" = "")
+
+# Nome do bucket onde está o arquivo
+bucket_name <- ""
+
+tmp <- tempfile(pattern = "candidatos_2020_12_nov_2020_checagem",  fileext = ".xlsx")
+r <- aws.s3::save_object(bucket = bucket_name, object = "candidatos_2020_12_nov_2020_checagem.xlsx", file = tmp)
+
+#print(r)
+
+candidatos_2020 <- read_excel(tmp)
+
+#candidatos_2020 <- read_excel("candidatos_2020/candidatos_teste.xlsx")
+
+candidatos_2020_df <- candidatos_2020 %>%
+  group_by(SG_UF, DS_CARGO)
+
+#print(head(candidatos_2020_df))
+
+```
+
+Sidebar {.sidebar}
+====================
+
+```{r}
+
+# Cria os filtros
+
+selectInput("tipo_uf", "Selecione a UF se desejar limitar",
+                  choices = c("Todas", unique(candidatos_2020_df$SG_UF)),
+                  selected = "Todas")
+    
+selectInput("tipo_cargo", "Selecione o cargo se desejar limitar",
+                  choices = c("Todos", unique(candidatos_2020_df$DS_CARGO)),
+                  selected = "Todos")
+ 
+ 
+ 
+  
+ 
+```
+
+Dados gerais
+====================
+
+### Tabela de candidatos
+
+```{r}
+
+library(DT)
+
+renderDataTable({
+  
+  
+  DT::datatable(
+    
+  candidatos_2020_df%>%
+     filter(SG_UF == ifelse(input$tipo_uf!= "Todas",input$tipo_uf,SG_UF),
+            DS_CARGO == ifelse(input$tipo_cargo!= "Todos",input$tipo_cargo,DS_CARGO)), 
+  rownames = FALSE,
+  fillContainer = TRUE,
+  extensions = 'Buttons', options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+  )
+ )
+
+  
+})
+
+
+```
+
