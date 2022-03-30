@@ -44,17 +44,17 @@ class TestPubliquese(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_002_verificar_baixar_processo(self):
-        r = self.Digesto.baixar_processo(processoID='218207978')
+        r = self.Digesto.baixar_processo(processoID="218207978")
         self.assertEqual(r.status_code, 200)
 
     def test_003_verificar_baixar_processo_fails(self):
-        r = self.Digesto.baixar_processo(processoID='218207978000')
-        self.assertEqual(r.json()['status_op'], 'Processo não encontrado')
+        r = self.Digesto.baixar_processo(processoID="218207978000")
+        self.assertEqual(r.json()["status_op"], "Processo não encontrado")
 
     def test_004_verificar_buscar_processos_parte(self):
-        r = self.Digesto.buscar_processos_parte(nome_parte='Fernando Holiday')
+        r = self.Digesto.buscar_processos_parte(nome_parte="Fernando Holiday")
         self.assertEqual(r.status_code, 200)
 
     def test_005_verificar_atualizar_processo(self):
-        r = self.Digesto.atualizar_processo(processoID='218207978')
+        r = self.Digesto.atualizar_processo(processoID="218207978")
         self.assertEqual(r.status_code, 200)

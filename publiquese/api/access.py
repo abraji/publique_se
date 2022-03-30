@@ -34,36 +34,31 @@ class Digesto:
         """search lawsuits by plaintiff or defendant name"""
         r = requests.post(
             url=self.processo_parte,
-            json={'nome_parte': nome_parte},
-            headers=self.headers
+            json={"nome_parte": nome_parte},
+            headers=self.headers,
         )
         return r
 
     def baixar_processo(self, processoID, params=None):
         """download known lawsuit"""
-        processo_url = f'{self.processo}{processoID}'
+        processo_url = f"{self.processo}{processoID}"
         r = requests.get(processo_url, params=params, headers=self.headers)
         return r
 
     def atualizar_processo(self, processoID, params={}):
         """update known lawsuit"""
-        params.update({
-            'id_update_callback': 'abc123',
-            'atualiza_tribunal_anexos': True
-        })
-        processo_url = f'{self.processo}{processoID}'
+        params.update(
+            {"id_update_callback": "abc123", "atualiza_tribunal_anexos": True}
+        )
+        processo_url = f"{self.processo}{processoID}"
         r = requests.get(processo_url, params=params, headers=self.headers)
         return r
-
-
-
 
     # def baixar_processos(self, cnj, params=None, tabela=False):
 
     #     """search lawsuits by individual identifier (cnj)"""
 
     #     isinstance(cnj, list)
-
 
     #     is_tabela = isinstance(cnj, list)
     #     if is_tabela:
