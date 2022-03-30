@@ -112,3 +112,5 @@ data-raw
 *.sublime-project
 *DS_Store
 # .github
+
+tests/api_key.txt
