@@ -73,8 +73,8 @@ class Jusbrasil:
 
         # define parâmetros de autenticaçõa
         self.endpoint = "https://dossier-api.jusbrasil.com.br/v5/"
-        self.endpoint_dossier = self.endpoint + "dossier/"
-        self.endpoint_lawsuit = self.endpoint + "lawsuit/"
+        self.endpoint_dossier = self.endpoint + "dossier"
+        self.endpoint_lawsuit = self.endpoint + "lawsuit"
         self.headers = {"Authorization": key}
 
     def consultar_processo(self, id_processo):

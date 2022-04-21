@@ -106,7 +106,6 @@ ENV/
 .idea/
 
 # new stuff
-prog
 data
 data-raw
 *.sublime-project
