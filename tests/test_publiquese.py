@@ -30,7 +30,7 @@ class TestPubliquese(unittest.TestCase):
             token = token.replace("\n", "")
 
         self.Digesto = publiquese.Digesto(key)
-        self.Jusbrasil = publiquese.Jusbrasil(token)
+        # self.Jusbrasil = publiquese.Jusbrasil(token)
 
     @classmethod
     def tearDown(self):
@@ -86,40 +86,40 @@ class TestPubliquese(unittest.TestCase):
             r = self.Digesto.atualizar_processo("1021887-19.2020.8.26.0100")
             self.assertEqual(r.status_code, 200)
 
-    def test_007_verificar_criacao_dossier(self):
+    # def test_007_verificar_criacao_dossier(self):
 
-        params = {
-            "kind": "LAWSUIT",
-            "artifacts": "lawsuits",
-            "filter": "Fernando Holiday Silva Bispo",
-        }
+    #     params = {
+    #         "kind": "LAWSUIT",
+    #         "artifacts": "lawsuits",
+    #         "filter": "Fernando Holiday Silva Bispo",
+    #     }
 
-        r = self.Jusbrasil.criar_dossier(params=params)
-        self.assertEqual(r.status_code, 200)
-        self.assertIsNotNone(r.json())
+    #     r = self.Jusbrasil.criar_dossier(params=params)
+    #     self.assertEqual(r.status_code, 200)
+    #     self.assertIsNotNone(r.json())
 
-    def test_008_verificar_listagem_dossier(self):
+    # def test_008_verificar_listagem_dossier(self):
 
-        r = self.Jusbrasil.listar_dossiers()
-        self.assertIsNotNone(r.json())
+    #     r = self.Jusbrasil.listar_dossiers()
+    #     self.assertIsNotNone(r.json())
 
-    def test_009_verificar_execucao_dossier(self):
+    # def test_009_verificar_execucao_dossier(self):
 
-        r = self.Jusbrasil.executar_dossier("andre_assumpcao")
-        self.assertIsNotNone(r.json())
+    #     r = self.Jusbrasil.executar_dossier("andre_assumpcao")
+    #     self.assertIsNotNone(r.json())
 
-    def test_010_verificar_listagem_arquivos_dossier(self):
+    # def test_010_verificar_listagem_arquivos_dossier(self):
 
-        r = self.Jusbrasil.listar_arquivos_dossier("andre_assumpcao")
-        self.assertIsNotNone(r.json())
+    #     r = self.Jusbrasil.listar_arquivos_dossier("andre_assumpcao")
+    #     self.assertIsNotNone(r.json())
 
-    def test_011_verificar_download_arquivos_dossier(self):
+    # def test_011_verificar_download_arquivos_dossier(self):
 
-        r = self.Jusbrasil.download_arquivos_dossier("andre_assumpcao")
-        self.assertIsNotNone(r.json())
+    #     r = self.Jusbrasil.download_arquivos_dossier("andre_assumpcao")
+    #     self.assertIsNotNone(r.json())
 
-    def test_012_verificar_consulta_processos(self):
+    # def test_012_verificar_consulta_processos(self):
 
-        r = self.Jusbrasil.consultar_processo("1021887-19.2020.8.26.0100")
-        self.assertGreater(len(r.json()), 1)
-        self.assertEqual(r.status_code, 200)
+    #     r = self.Jusbrasil.consultar_processo("1021887-19.2020.8.26.0100")
+    #     self.assertGreater(len(r.json()), 1)
+    #     self.assertEqual(r.status_code, 200)

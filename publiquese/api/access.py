@@ -62,35 +62,35 @@ class Digesto:
         return r
 
 
-class Jusbrasil:
+# class Jusbrasil:
 
-    """Classe para obtenção dos processos via API Dossier Jusbrasil"""
+#     """Classe para obtenção dos processos via API Dossier Jusbrasil"""
 
-    def __init__(self, key):
+#     def __init__(self, key):
 
-        # define key de acesso
-        self.key = key
+#         # define key de acesso
+#         self.key = key
 
-        # define parâmetros de autenticaçõa
-        self.endpoint = "https://dossier-api.jusbrasil.com.br/v5/"
-        self.endpoint_dossier = self.endpoint + "dossier"
-        self.endpoint_lawsuit = self.endpoint + "lawsuit"
-        self.headers = {"Authorization": key}
+#         # define parâmetros de autenticaçõa
+#         self.endpoint = "https://dossier-api.jusbrasil.com.br/v5/"
+#         self.endpoint_dossier = self.endpoint + "dossier"
+#         self.endpoint_lawsuit = self.endpoint + "lawsuit"
+#         self.headers = {"Authorization": key}
 
-    def consultar_processo(self, id_processo):
-        pass
+#     def consultar_processo(self, id_processo):
+#         pass
 
-    def criar_dossier(self, params):
-        pass
+#     def criar_dossier(self, params):
+#         pass
 
-    def listar_dossiers(self):
-        pass
+#     def listar_dossiers(self):
+#         pass
 
-    def executar_dossier(self, dossier_id):
-        pass
+#     def executar_dossier(self, dossier_id):
+#         pass
 
-    def listar_arquivos_dossier(self, dossier_id, offset, kind="lawsuits"):
-        pass
+#     def listar_arquivos_dossier(self, dossier_id, offset, kind="lawsuits"):
+#         pass
 
-    def download_arquivos_dossier(self, dossier_id):
-        pass
+#     def download_arquivos_dossier(self, dossier_id):
+#         pass
