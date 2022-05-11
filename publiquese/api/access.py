@@ -23,6 +23,8 @@ class Digesto:
         self.processo = self.endpoint + "tribproc/"
         self.processo_parte = self.endpoint + "tribproc/search_parte_procs"
 
+        # define parâmetros principais
+
     def testar_api(self):
 
         """check whether API is working"""

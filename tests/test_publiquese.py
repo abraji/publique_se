@@ -31,6 +31,7 @@ class TestPubliquese(unittest.TestCase):
 
         self.Digesto = publiquese.Digesto(key)
         # self.Jusbrasil = publiquese.Jusbrasil(token)
+        self.TSE = publiquese.TSE()
 
     @classmethod
     def tearDown(self):
@@ -46,33 +47,33 @@ class TestPubliquese(unittest.TestCase):
         assert help_result.exit_code == 0
         assert "--help  Show this message and exit." in help_result.output
 
-    def test_001_verificar_api(self):
+    def test_001_digesto_verificar_api(self):
 
         r = self.Digesto.testar_api()
         self.assertEqual(r.status_code, 200)
 
-    def test_002_verificar_baixar_processo(self):
+    def test_002_digesto_verificar_baixar_processo(self):
 
         r = self.Digesto.baixar_processo("399037238")
         self.assertEqual(r.status_code, 200)
 
-    def test003_verificar_baixar_processo_com_ids_distintos(self):
+    def test_003_digesto_verificar_baixar_processo_com_ids_distintos(self):
 
         r01 = self.Digesto.baixar_processo("399037238")
         r02 = self.Digesto.baixar_processo("1021887-19.2020.8.26.0100")
         self.assertEqual(r01.json(), r02.json())
 
-    def test_004_verificar_baixar_processo_fails(self):
+    def test_004_digesto_verificar_baixar_processo_fails(self):
 
         r = self.Digesto.baixar_processo("218207978000")
         self.assertEqual(r.json()["status_op"], "Processo não encontrado")
 
-    def test_005_verificar_buscar_processos_parte(self):
+    def test_005_digesto_verificar_buscar_processos_parte(self):
 
         r = self.Digesto.buscar_processos_parte(nome_parte="Fernando Holiday")
         self.assertEqual(r.status_code, 200)
 
-    def test_006_verificar_atualizar_processo(self):
+    def test_006_digesto_verificar_atualizar_processo(self):
 
         r = self.Digesto.baixar_processo("1021887-19.2020.8.26.0100")
 
@@ -123,3 +124,18 @@ class TestPubliquese(unittest.TestCase):
     #     r = self.Jusbrasil.consultar_processo("1021887-19.2020.8.26.0100")
     #     self.assertGreater(len(r.json()), 1)
     #     self.assertEqual(r.status_code, 200)
+
+    # def test_007_tse_verificar_api(self):
+
+    #     r = self.TSE.testar_api()
+    #     self.assertEqual(r.status_code, 200)
+
+    # def test_008_tse_baixar_candidatos(self):
+
+    #     r = self.TSE.baixar_candidatos(2018)
+    #     self.assertRegex(r, "2018")
+
+    # def test_009_tse_baixar_resultados(self):
+
+    #     r = self.TSE.baixar_resultados(2018)
+    #     self.assertRegex(r, "2018")

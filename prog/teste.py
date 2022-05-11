@@ -21,12 +21,12 @@ with open("tests/api_token.txt", "r") as fp:
     token = token.replace("\n", "")
 
 
-Jusbrasil = Jusbrasil(token)
-Jusbrasil.endpoint_dossier
+# Jusbrasil = Jusbrasil(token)
+# Jusbrasil.endpoint_dossier
 
 # iniciar classes
 Digesto = publiquese.Digesto(key)
-Jusbrasil = publiquese.Jusbrasil(token)
+# Jusbrasil = publiquese.Jusbrasil(token)
 
 # DIGESTO: baixar processo de Fernando Holiday vs. Ciro Gomes usando o
 # identificador interno do digesto e o identificador CNJ
@@ -41,7 +41,6 @@ data_update = datetime.strptime(data_update, '%Y-%m-%d %H:%M:%S')
 diff = datetime.today() - data_update
 diff.days <= 3
 
-
 hoje = datetime.strftime(datetime.today(), '%d/%m/%Y')
 
 # JUSBRASIL
@@ -54,3 +53,20 @@ params = {
 header = {'Authorization': token}
 r = requests.post(Jusbrasil.endpoint_lawsuit, data={'cnj_number': "1021887-19.2020.8.26.0100"}, headers=header)
 r.status_code
+
+
+url = 'https://dadosabertos.tse.jus.br/group'
+# define main url
+url = 'https://cdn.tse.jus.br/estatistica/sead/odsele/'
+
+# define endpoints
+candidatos = url + "consulta_cand/"
+data_folder = Path().resolve() / 'data-raw'
+year = [2018][0]
+from tqdm import tqdm
+for year in tqdm(years):
+    file = f'consulta_cand_{year}.zip'
+    r = requests.get(candidatos + file, stream=True)
+    with open(data_folder / file, 'wb') as fp:
+        for chunk in r.iter_content(chunk_size=128):
+            fp.write(chunk)
