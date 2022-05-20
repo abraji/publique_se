@@ -6,26 +6,30 @@ import unittest
 from click.testing import CliRunner
 from datetime import datetime
 from pathlib import Path
+from shutil import rmtree
 
 import publiquese
 from publiquese import cli
 
 
 class TestPubliquese(unittest.TestCase):
+
     """Tests for `publiquese` package."""
 
     @classmethod
     def setUp(self):
+
         """Set up test fixtures, if any."""
 
-        ROOT = Path("tests").resolve()
-        DATA = ROOT / "data"
+        self.ROOT = Path("tests").resolve()
+        self.DATA = self.ROOT / "data"
+        self.DATA_RAW = self.ROOT / "data-raw"
 
-        with open(ROOT / "api_key.txt", "r") as fp:
+        with open(self.ROOT / "api_key.txt", "r") as fp:
             key = fp.readline()
             key = key.replace("\n", "")
 
-        with open(ROOT / "api_token.txt", "r") as fp:
+        with open(self.ROOT / "api_token.txt", "r") as fp:
             token = fp.readline()
             token = token.replace("\n", "")
 
@@ -35,7 +39,13 @@ class TestPubliquese(unittest.TestCase):
 
     @classmethod
     def tearDown(self):
+
         """Tear down test fixtures, if any."""
+
+        for p in self.DATA_RAW.glob("*.txt"):
+            p.unlink()
+        for p in self.DATA_RAW.glob("*.csv"):
+            p.unlink()
 
     def test_000_cli(self):
         """Test the CLI."""
@@ -86,6 +96,32 @@ class TestPubliquese(unittest.TestCase):
         else:
             r = self.Digesto.atualizar_processo("1021887-19.2020.8.26.0100")
             self.assertEqual(r.status_code, 200)
+
+    def test_007_processar_dados_digesto(self):
+
+        filepath = self.DATA_RAW / "processos_teste.json"
+        dados = publiquese.abrir_dados_digesto(filepath)
+        self.assertIsNotNone(dados)
+
+    def test_008_extrair_partes_processo(self):
+
+        filepath = self.DATA_RAW / "processos_teste.json"
+        dados = publiquese.abrir_dados_digesto(filepath)
+        dados_processuais = publiquese.extrair_partes_processo(dados[0])
+        for elemento in dados_processuais:
+            self.assertGreater(len(elemento.keys()), 0)
+
+    @unittest.skip("yet to be developed")
+    def test_009_designar_keys_advogados(self):
+        pass
+
+    @unittest.skip("yet to be developed")
+    def test_010_designar_keys_anexos(self):
+        pass
+
+    @unittest.skip("yet to be developed")
+    def test_011_designar_keys_audiencias(self):
+        pass
 
     # def test_007_verificar_criacao_dossier(self):
 
