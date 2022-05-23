@@ -26,6 +26,7 @@ keys_processosRelacionados = [
 keys_partes = [
     "participacaoID",
     "parteID",
+    "parteNome",
     "parteNormalizada",
     "cnpj",
     "cpf",

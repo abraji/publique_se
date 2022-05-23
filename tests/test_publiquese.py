@@ -111,17 +111,37 @@ class TestPubliquese(unittest.TestCase):
         for elemento in dados_processuais:
             self.assertGreater(len(elemento.keys()), 0)
 
-    @unittest.skip("yet to be developed")
     def test_009_designar_keys_advogados(self):
-        pass
 
-    @unittest.skip("yet to be developed")
+        filepath = self.DATA_RAW / "processos_teste.json"
+        dados = publiquese.abrir_dados_digesto(filepath)
+        _, _, partes = publiquese.extrair_partes_processo(dados[0])
+        advogados = publiquese.designar_keys_advogados(partes)
+        self.assertIsNotNone(advogados["advogadoID"])
+
     def test_010_designar_keys_anexos(self):
-        pass
 
-    @unittest.skip("yet to be developed")
+        filepath = self.DATA_RAW / "processos_teste.json"
+        dados = publiquese.abrir_dados_digesto(filepath)
+        capa, _, _ = publiquese.extrair_partes_processo(dados[4])
+        anexos = publiquese.designar_keys_anexos(capa)
+        self.assertIsNotNone(anexos["anexoID"])
+
     def test_011_designar_keys_audiencias(self):
-        pass
+
+        filepath = self.DATA_RAW / "processos_teste.json"
+        dados = publiquese.abrir_dados_digesto(filepath)
+        capa, _, _ = publiquese.extrair_partes_processo(dados[10])
+        audiencias = publiquese.designar_keys_audiencias(capa)
+        self.assertIsNotNone(audiencias["data"])
+
+    def test_012_designar_keys_processos_relacionados(self):
+
+        filepath = self.DATA_RAW / "processos_teste.json"
+        dados = publiquese.abrir_dados_digesto(filepath)
+        capa, _, _ = publiquese.extrair_partes_processo(dados[4])
+        processos = publiquese.designar_keys_processos_relacionados(capa)
+        self.assertIsNotNone(processos["id"])
 
     # def test_007_verificar_criacao_dossier(self):
 

@@ -44,19 +44,26 @@ def extrair_partes_processo(processo):
     return processo, processo_movs, processo_partes
 
 
-def designar_keys_advogados(processo):
+def designar_keys_advogados(partes):
 
-    if "processosRelacionados" in processo.keys():
+    if "advogados" in partes.keys():
 
-        processos_relacionados = defaultdict(list)
-        for proc in processo["processosRelacionados"]:
-            for k, v in zip(keys_processosRelacionados, proc):
-                processos_relacionados[k].append(v)
+        advs_info = zip(partes["advogados"], partes["parteRelacaoID"])
 
-        numero_procs = len(processos_relacionados["data"])
-        processos_relacionados["numero"] = [processo["numero"]] * numero_procs
+        processo_advogados = defaultdict(list)
+        for advogados_parte, parteID in advs_info:
 
-    return processos_relacionados
+            if len(advogados_parte) > 0:
+                cnj = list(set(partes["numero"]))[0]
+                processo_advogados["numero"].append(cnj)
+
+                for advogado in advogados_parte:
+                    processo_advogados["parteID"].append(parteID)
+
+                    for k, v in zip(keys_advogados, advogado):
+                        processo_advogados[k].append(v)
+
+    return processo_advogados
 
 
 def designar_keys_anexos(processo):
@@ -91,12 +98,16 @@ def designar_keys_audiencias(processo):
     return processo_audiencias
 
 
-# import pandas as pd
-# pd.DataFrame(processo_movs[0])
+def designar_keys_processos_relacionados(processo):
 
-# filepath = DATA_RAW / 'processos_2022-05-11.json'
+    if "processosRelacionados" in processo.keys():
 
-# dados = abrir_dados_digesto(filepath)
-# processo = dados[0]
+        processos_relacionados = defaultdict(list)
+        for proc in processo["processosRelacionados"]:
+            for k, v in zip(keys_processosRelacionados, proc):
+                processos_relacionados[k].append(v)
 
-# dt = [extrair_partes_processo(processo) for processo in dados]
+        numero_procs = len(processos_relacionados["data"])
+        processos_relacionados["numero"] = [processo["numero"]] * numero_procs
+
+    return processos_relacionados
