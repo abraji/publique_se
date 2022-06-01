@@ -5,7 +5,7 @@ import requests
 
 class Digesto:
 
-    """classe para obtenção dos processos via api Digesto"""
+    """Digesto API class"""
 
     def __init__(self, key):
 
@@ -14,7 +14,7 @@ class Digesto:
         # define key de acesso
         self.key = key
 
-        # define parâmetros de autenticaçõa
+        # define parâmetros de autenticação
         self.endpoint = "https://op.digesto.com.br/api/"
         self.headers = {"Authorization": "Bearer " + key}
 
@@ -22,16 +22,20 @@ class Digesto:
         self.teste_api = self.endpoint + "user/current"
         self.processo = self.endpoint + "tribproc/"
         self.processo_parte = self.endpoint + "tribproc/search_parte_procs"
-        self.tribunalIDs = self.endpoint + "tribproc_tribunal?per_page=500"
-        self.assuntos = self.endpoint + "tribproc/assuntos"
+
+        # define parâmetros principais
 
     def testar_api(self):
-        """check whether api is working"""
+
+        """check whether API is working"""
+
         r = requests.get(self.teste_api, headers=self.headers)
         return r
 
     def buscar_processos_parte(self, nome_parte):
+
         """search lawsuits by plaintiff or defendant name"""
+
         r = requests.post(
             url=self.processo_parte,
             json={"nome_parte": nome_parte},
@@ -39,120 +43,30 @@ class Digesto:
         )
         return r
 
-    def baixar_processo(self, processoID, params=None):
+    def baixar_processo(self, id_processo, params=None):
+
         """download known lawsuit"""
-        processo_url = f"{self.processo}{processoID}"
+
+        params = {"tipo_numero": 8} if not params else params
+        processo_url = f"{self.processo}{id_processo}"
         r = requests.get(processo_url, params=params, headers=self.headers)
         return r
 
-    def atualizar_processo(self, processoID, params={}):
+    def atualizar_processo(self, id_processo, params=None):
+
         """update known lawsuit"""
-        params.update(
-            {"id_update_callback": "abc123", "atualiza_tribunal_anexos": True}
-        )
-        processo_url = f"{self.processo}{processoID}"
+
+        if not params:
+            params = {"atualiza_tribunal_anexos": "true", "tipo_numero": 8}
+
+        processo_url = f"{self.processo}{id_processo}"
         r = requests.get(processo_url, params=params, headers=self.headers)
         return r
 
-    # def baixar_processos(self, cnj, params=None, tabela=False):
 
-    #     """search lawsuits by individual identifier (cnj)"""
+# class Jusbrasil:
 
-    #     isinstance(cnj, list)
-
-    #     is_tabela = isinstance(cnj, list)
-    #     if is_tabela:
-    #         r = requests.post(
-    #             self.processo_tabela, json={"cnjs": cnj}, headers=self.headers
-    #         )
-    #     else:
-    #         r = requests.get(
-    #             self.processo + cnj, params=params, headers=self.headers
-    #         )
-    #     if r:
-    #         return r.json()
-
-    # def baixar_resumos(self, payload):
-
-    #     """ search summary of all lawsuits for one person"""
-
-    #     r = requests.post(
-    #         self.processo_resumo, json=payload, headers=self.headers
-    #     )
-    #     if r:
-    #         return r.json()
-
-    # def baixar_tribunais(self):
-
-    #     """ get list of court IDs"""
-
-    #     r = requests.get(self.tribunalIDs, headers=self.headers)
-    #     r = r.json()
-    #     columns = ["$uri", "nome", "sigla"]
-    #     r = [{k: v for k, v in t.items() if k in columns} for t in r]
-    #     return r
-
-    # def baixar_assuntos(self):
-
-    #     """ get list of legal issues:"""
-
-    #     r = requests.get(self.assuntos, headers=self.headers)
-    #     r = r.json()
-    #     colunas = [f"id{i},nivel{i}" for i in range(1, 6)]
-    #     colunas = [coluna for nivel in colunas for coluna in nivel.split(",")]
-    #     nivel1, nivel2, nivel3, nivel4, nivel5 = [], [], [], [], []
-    #     for n1 in r:
-    #         nivel1 += [(n1["id"], n1["name"])]
-    #         for n2 in n1["assuntos"]:
-    #             nivel2 += [(n1["id"], n1["name"], n2["id"], n2["name"])]
-    #             for n3 in n2["assuntos"]:
-    #                 nivel3 += [
-    #                     (
-    #                         n1["id"],
-    #                         n1["name"],
-    #                         n2["id"],
-    #                         n2["name"],
-    #                         n3["id"],
-    #                         n3["name"],
-    #                     )
-    #                 ]
-    #                 for n4 in n3["assuntos"]:
-    #                     nivel4 += [
-    #                         (
-    #                             n1["id"],
-    #                             n1["name"],
-    #                             n2["id"],
-    #                             n2["name"],
-    #                             n3["id"],
-    #                             n3["name"],
-    #                             n4["id"],
-    #                             n4["name"],
-    #                         )
-    #                     ]
-    #                     for n5 in n4["assuntos"]:
-    #                         if n4["assuntos"]:
-    #                             nivel5 += [
-    #                                 (
-    #                                     n1["id"],
-    #                                     n1["name"],
-    #                                     n2["id"],
-    #                                     n2["name"],
-    #                                     n3["id"],
-    #                                     n3["name"],
-    #                                     n4["id"],
-    #                                     n4["name"],
-    #                                     n5["id"],
-    #                                     n5["name"],
-    #                                 )
-    #                             ]
-    #     return pd.DataFrame(
-    #         nivel1 + nivel2 + nivel3 + nivel4 + nivel5, columns=colunas
-    #     )
-
-
-# class JusBrasil(Digesto):
-
-#     """classe para obtenção dos processos via api Dossier Jusbrasil"""
+#     """Classe para obtenção dos processos via API Dossier Jusbrasil"""
 
 #     def __init__(self, key):
 
@@ -160,5 +74,25 @@ class Digesto:
 #         self.key = key
 
 #         # define parâmetros de autenticaçõa
-#         self.endpoint = "https://dossier-api.jusbrasil.com.br"
+#         self.endpoint = "https://dossier-api.jusbrasil.com.br/v5/"
+#         self.endpoint_dossier = self.endpoint + "dossier"
+#         self.endpoint_lawsuit = self.endpoint + "lawsuit"
 #         self.headers = {"Authorization": key}
+
+#     def consultar_processo(self, id_processo):
+#         pass
+
+#     def criar_dossier(self, params):
+#         pass
+
+#     def listar_dossiers(self):
+#         pass
+
+#     def executar_dossier(self, dossier_id):
+#         pass
+
+#     def listar_arquivos_dossier(self, dossier_id, offset, kind="lawsuits"):
+#         pass
+
+#     def download_arquivos_dossier(self, dossier_id):
+#         pass

@@ -106,11 +106,10 @@ ENV/
 .idea/
 
 # new stuff
-prog
 data
 data-raw
 *.sublime-project
 *DS_Store
-# .github
-
-tests/api_key.txt
+.github
+scratch
+tests/api_*

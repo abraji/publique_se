@@ -91,3 +91,7 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+update-processos: ## update processos dataset
+	conda activate publique-se
+	python prog/atualizar_processos_publiquese.py
