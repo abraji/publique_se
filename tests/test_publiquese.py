@@ -85,6 +85,7 @@ class TestPubliquese(unittest.TestCase):
         r = self.Digesto.buscar_processos_parte(nome_parte="Fernando Holiday")
         self.assertEqual(r.status_code, 200)
 
+    @unittest.skip("Este teste de atualização não deve ser feito sempre.")
     def test_006_digesto_verificar_atualizar_processo(self):
 
         r = self.Digesto.baixar_processo("1021887-19.2020.8.26.0100")

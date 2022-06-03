@@ -2,12 +2,15 @@ import json
 import re
 import requests
 
+from requests.models import Response
+from typing import Optional
+
 
 class Digesto:
 
     """Digesto API class"""
 
-    def __init__(self, key):
+    def __init__(self, key: str) -> None:
 
         """load key and endpoints"""
 
@@ -25,14 +28,14 @@ class Digesto:
 
         # define parâmetros principais
 
-    def testar_api(self):
+    def testar_api(self) -> Response:
 
         """check whether API is working"""
 
         r = requests.get(self.teste_api, headers=self.headers)
         return r
 
-    def buscar_processos_parte(self, nome_parte):
+    def buscar_processos_parte(self, nome_parte: str) -> Response:
 
         """search lawsuits by plaintiff or defendant name"""
 
@@ -43,7 +46,9 @@ class Digesto:
         )
         return r
 
-    def baixar_processo(self, id_processo, params=None):
+    def baixar_processo(
+        self, id_processo: str, params: dict = None
+    ) -> Response:
 
         """download known lawsuit"""
 
@@ -52,7 +57,9 @@ class Digesto:
         r = requests.get(processo_url, params=params, headers=self.headers)
         return r
 
-    def atualizar_processo(self, id_processo, params=None):
+    def atualizar_processo(
+        self, id_processo: str, params: dict = None
+    ) -> Response:
 
         """update known lawsuit"""
 
@@ -62,37 +69,3 @@ class Digesto:
         processo_url = f"{self.processo}{id_processo}"
         r = requests.get(processo_url, params=params, headers=self.headers)
         return r
-
-
-# class Jusbrasil:
-
-#     """Classe para obtenção dos processos via API Dossier Jusbrasil"""
-
-#     def __init__(self, key):
-
-#         # define key de acesso
-#         self.key = key
-
-#         # define parâmetros de autenticaçõa
-#         self.endpoint = "https://dossier-api.jusbrasil.com.br/v5/"
-#         self.endpoint_dossier = self.endpoint + "dossier"
-#         self.endpoint_lawsuit = self.endpoint + "lawsuit"
-#         self.headers = {"Authorization": key}
-
-#     def consultar_processo(self, id_processo):
-#         pass
-
-#     def criar_dossier(self, params):
-#         pass
-
-#     def listar_dossiers(self):
-#         pass
-
-#     def executar_dossier(self, dossier_id):
-#         pass
-
-#     def listar_arquivos_dossier(self, dossier_id, offset, kind="lawsuits"):
-#         pass
-
-#     def download_arquivos_dossier(self, dossier_id):
-#         pass
