@@ -17,7 +17,7 @@ class TestPubliquese(unittest.TestCase):
     """Tests for `publiquese` package."""
 
     @classmethod
-    def setUp(self):
+    def setUpClass(self):
 
         """Set up test fixtures, if any."""
 
@@ -29,19 +29,21 @@ class TestPubliquese(unittest.TestCase):
             key = fp.readline()
             key = key.replace("\n", "")
 
-        with open(self.ROOT / "api_token.txt", "r") as fp:
-            token = fp.readline()
-            token = token.replace("\n", "")
+        # with open(self.ROOT / "api_token.txt", "r") as fp:
+        #     token = fp.readline()
+        #     token = token.replace("\n", "")
 
         self.Digesto = publiquese.Digesto(key)
         # self.Jusbrasil = publiquese.Jusbrasil(token)
-        self.TSE = publiquese.TSE()
+        # self.TSE = publiquese.TSE()
 
     @classmethod
-    def tearDown(self):
+    def tearDownClass(self):
 
         """Tear down test fixtures, if any."""
 
+        for p in self.DATA.glob("*.csv"):
+            p.unlink()
         for p in self.DATA_RAW.glob("*.txt"):
             p.unlink()
         for p in self.DATA_RAW.glob("*.csv"):
@@ -142,6 +144,30 @@ class TestPubliquese(unittest.TestCase):
         capa, _, _ = publiquese.extrair_partes_processo(dados[4])
         processos = publiquese.designar_keys_processos_relacionados(capa)
         self.assertIsNotNone(processos["id"])
+
+    def test_013_descomprimir_arquivos_candidatos_tse(self):
+
+        filepath = self.DATA_RAW / "consulta_cand_AC.zip"
+        destpath = self.DATA
+        filepaths = publiquese.unzip_candidatos(filepath, destpath)
+        filestems = [file.stem for file in filepaths]
+        checkfile = [f"consulta_cand_{y}_AC" for y in range(2016, 2021, 2)]
+        self.assertEqual(filestems, checkfile)
+
+    def test_014_ler_arquivos_candidatos_tse(self):
+
+        files = [f"consulta_cand_{y}_AC.csv" for y in range(2016, 2021, 2)]
+        filepaths = [self.DATA / file for file in files]
+        datasets = [publiquese.read_candidatos(fp) for fp in filepaths]
+        self.assertEqual([len(dt) for dt in datasets], [2311, 587, 3065])
+
+    def test_015_checar_se_arquivos_candidatos_tem_as_mesmas_colunas(self):
+
+        files = [f"consulta_cand_{y}_AC.csv" for y in range(2016, 2021, 2)]
+        filepaths = [self.DATA / file for file in files]
+        datasets = [publiquese.read_candidatos(fp) for fp in filepaths]
+        column_names = [dt[0] for dt in datasets]
+        self.assertTrue(column_names[0] == column_names[1] == column_names[2])
 
     # def test_007_verificar_criacao_dossier(self):
 

@@ -3,6 +3,7 @@
 from .globals import *
 
 from .api.access import *
-from .tse.access import *
 
-from .etl.process_digesto import *
+from .digesto.process_digesto import *
+
+from .tse.process_tse import *
